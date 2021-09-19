@@ -4,8 +4,6 @@
 #include "test.hpp"
 #include <iostream>
 #include <chrono>
-
-
 // run unit tests: uncomment next line and run in debug mode
 //#define UNITTESTS 
 
@@ -16,7 +14,7 @@ int main()
 #ifdef UNITTESTS
 	test();
 #else
-	const std::string baseDir = "../../../data/bentham/"; // dir containing corpus.txt, chars.txt, wordChars.txt, mat_x.csv, gt_x.txt with x=0, 1, ...
+	const std::string baseDir = "../data/mine/"; // dir containing corpus.txt, chars.txt, wordChars.txt, mat_x.csv, gt_x.txt with x=0, 1, ...
 	const size_t sampleEach = 1; // only take each k*sampleEach sample from dataset, with k=0, 1, ...
 	const double addK = 1.0; // add-k smoothing of bigram distribution
 	const LanguageModelType lmType = LanguageModelType::NGramsForecastAndSample; // scoring mode
@@ -30,18 +28,26 @@ int main()
 	{
 		// get data
 		const auto data = loader.getNext();
-
+		int prb = 1;
 		// decode it
-		const auto res = wordBeamSearch(data.mat, 10, lm, lmType);
+		// std::vector<mType> extra_info;
+		std::vector<std::vector<double>> res = wordBeamSearch(data.mat, 10, lm, lmType);
+		std::cout << res[0].size() << '-' << res[1].size() << '-' << res[2].size() << '-' <<"\n";
+		for (auto i = 0; i< 10; i++)
+		{
+			std::cout<<res[0][i]<< "->" << res[1][i] << "->" << res[2][i] <<'\n';
+		}
+		
 
-		// show results
-		std::cout << "Sample: " << ctr + 1 << "\n";
-		std::cout << "Result:       \"" << lm->labelToUtf8(res) << "\"\n";
-		std::cout << "Ground Truth: \"" << lm->labelToUtf8(data.gt) << "\"\n";
-		metrics.addResult(data.gt, res);
-		std::cout << "Accumulated CER and WER so far: CER: " << metrics.getCER() << " WER: " << metrics.getWER() << "\n";
-		const std::chrono::system_clock::time_point currTime = std::chrono::system_clock::now();
-		std::cout << "Average Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(currTime-startTime).count()/(ctr+1) << "ms\n\n";
+		// // show results
+		// std::cout << "Sample: " << ctr + 1 << "\n";
+		// std::cout << "Result:       \"" << lm->labelToUtf8(res) << "\"\n";
+		// // std::cout << "Result:       \"" << res << "\"\n";
+		// std::cout << "Ground Truth: \"" << lm->labelToUtf8(data.gt) << "\"\n";
+		// metrics.addResult(data.gt, res);
+		// std::cout << "Accumulated CER and WER so far: CER: " << metrics.getCER() << " WER: " << metrics.getWER() << "\n";
+		// const std::chrono::system_clock::time_point currTime = std::chrono::system_clock::now();
+		// std::cout << "Average Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(currTime-startTime).count()/(ctr+1) << "ms\n\n";
 		++ctr;
 	}
 
@@ -49,6 +55,6 @@ int main()
 #endif
 
 	std::cout<<"Press any key to continue\n";
-	getchar();
+	// getchar();
 	return 0;
 }

@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <cstddef>
 
-
 class Beam
 {
 public:
@@ -17,10 +16,12 @@ public:
 
 	// next possible characters and words
 	const std::vector<uint32_t>& getText() const;
+	const std::vector<uint32_t>& getTime() const;
+	const std::vector<double>& getProb() const;
 	std::vector<uint32_t> getNextChars() const;
-
+	
 	// create child beam by extending by given character
-	std::shared_ptr<Beam> createChildBeam(double prBlank, double prNonBlank, uint32_t newChar=std::numeric_limits<uint32_t>::max()) const;
+	std::shared_ptr<Beam> createChildBeam(double prBlank, double prNonBlank, size_t time_step, double prob , uint32_t newChar=std::numeric_limits<uint32_t>::max()) const;
 
 	// merge given beam with this beam
 	void mergeBeam(const std::shared_ptr<Beam>& beam);
@@ -45,6 +46,8 @@ private:
 	std::vector<uint32_t> m_text; // complete text of this beam
 	std::vector<uint32_t> m_wordDev; // currently "built" word
 	std::vector<std::vector<uint32_t>> m_wordHist; // history of words in text
+	std::vector<uint32_t> m_time; // complete text of this beam
+	std::vector<double> m_prob; // complete text of this beam
 	double m_prTextTotal = 1.0;
 	double m_prTextUnnormalized = 1.0;
 	bool m_useNGrams = false;

@@ -4,7 +4,6 @@
 #include <math.h>
 #include <iostream>
 
-
 Beam::Beam(const std::shared_ptr<LanguageModel>& lm, bool useNGrams, bool forcastNGrams, bool sampleNGrams)
 :m_lm(lm)
 ,m_useNGrams(useNGrams)
@@ -25,7 +24,17 @@ std::vector<uint32_t> Beam::getNextChars() const
 	return m_lm->getNextChars(m_wordDev);
 }
 
+const std::vector<uint32_t>& Beam::getTime() const
+{
 
+	return m_time;
+}
+
+const std::vector<double>& Beam::getProb() const
+{
+
+	return m_prob;
+}
 std::pair<double, std::vector<std::vector<uint32_t>>> Beam::getNextWordsSampled(const std::shared_ptr<LanguageModel>& lm, const std::vector<uint32_t>& text) const
 {
 	const size_t maxSampleSize = 20;
@@ -113,7 +122,7 @@ void Beam::handleNGrams(std::shared_ptr<Beam>& newBeam, uint32_t newChar) const
 }
 
 
-std::shared_ptr<Beam> Beam::createChildBeam(double prBlank, double prNonBlank, uint32_t newChar) const
+std::shared_ptr<Beam> Beam::createChildBeam(double prBlank, double prNonBlank, size_t time_step, double prob, uint32_t newChar) const
 {
 	// copy this beam
 	std::shared_ptr<Beam> newBeam = std::make_shared<Beam>(*this);
@@ -140,6 +149,8 @@ std::shared_ptr<Beam> Beam::createChildBeam(double prBlank, double prNonBlank, u
 		
 		// always append new char to text of beam
 		newBeam->m_text.push_back(newChar);
+		newBeam->m_time.push_back(time_step);
+		newBeam->m_prob.push_back(prob);
 	}
 	
 	newBeam->m_prBlank = prBlank;
@@ -176,6 +187,7 @@ void Beam::completeText()
 		const auto& completeWord = nextWords[0];
 		m_text.resize(m_text.size() - m_wordDev.size());
 		m_text.insert(m_text.end(), completeWord.begin(), completeWord.end());
+
 	}
 	
 }
@@ -188,6 +200,7 @@ void BeamList::addBeam(const std::shared_ptr<Beam>& beam)
 	if (iter == m_beams.end())
 	{
 		m_beams[beam->getText()] = beam;
+		// m_beams[beam->getExtra_info()] = beam;
 	}
 	else
 	{
@@ -214,6 +227,7 @@ std::vector<std::shared_ptr<Beam>> BeamList::getBestBeams(size_t beamWidth)
 	for (size_t i = 0; i < beams.size() && i < beamWidth; ++i)
 	{
 		res.push_back(beams[i].second);
+		
 	}
 	return res;
 }

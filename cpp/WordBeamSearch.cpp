@@ -3,8 +3,7 @@
 #include <vector>
 #include <memory>
 
-
-std::vector<uint32_t> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const std::shared_ptr<LanguageModel>& lm, LanguageModelType lmType)
+std::vector<std::vector<double>> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const std::shared_ptr<LanguageModel>& lm, LanguageModelType lmType)
 {
 	// dim0: T, dim1: C
 	const size_t maxT = mat.rows();
@@ -35,7 +34,11 @@ std::vector<uint32_t> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const
 			prBlank = beam->getTotalProb() * mat.getAt(t, blank);
 			
 			// add copy of original beam to current time step
-			curr.addBeam(beam->createChildBeam(prBlank, prNonBlank));
+			// mType extra_info;
+			// extra_info.time_step = t;
+			// extra_info.prob = mat.getAt(t, blank);
+			// extra_info.push_back(mt);
+			curr.addBeam(beam->createChildBeam(prBlank, prNonBlank, t,  mat.getAt(t, blank)));
 
 			// extend current beam
 			const std::vector<uint32_t> nextChars = beam->getNextChars();
@@ -54,7 +57,12 @@ std::vector<uint32_t> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const
 					prNonBlank = mat.getAt(t, c) * beam->getTotalProb();
 				}
 
-				curr.addBeam(beam->createChildBeam(prBlank, prNonBlank, c));
+				// mType extra_info;
+				// extra_info.time_step = t;
+				// extra_info.char_name = c;
+				// extra_info.prob = mat.getAt(t, c);
+				// extra_info.push_back(mt);
+				curr.addBeam(beam->createChildBeam(prBlank, prNonBlank, t, mat.getAt(t, c) , c));
 			}
 		}
 
@@ -64,7 +72,14 @@ std::vector<uint32_t> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const
 	// return best entry
 	const auto bestBeam = last.getBestBeams(1)[0];
 	bestBeam->completeText();
-	return bestBeam->getText();
+	// bestBeam->getExtra_info()
+
+	std::vector<double> time_step(bestBeam->getTime().begin(), bestBeam->getTime().end());
+	std::vector<double> text_char(bestBeam->getText().begin(), bestBeam->getText().end());
+
+	std::vector<std::vector<double>> v = {time_step , text_char, bestBeam->getProb()};
+	return v;
+	// return last.getExtra_info();
 }
 
 
