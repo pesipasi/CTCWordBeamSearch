@@ -115,7 +115,7 @@ public:
 	
 	// fill result from decoder into output tensor
 	template<class U>
-	void fillResult(const std::vector<uint32_t>& decoded, U& outputMapped, size_t batchElement, size_t maxT, size_t maxC)
+	void fillResult(const std::vector<std::vector<double>>& decoded, U& outputMapped, size_t batchElement, size_t maxT, size_t maxC)
 	{
 		const size_t blank = maxC - 1;
 
@@ -170,7 +170,7 @@ public:
 			MatrixTensor<decltype(inputMapped)> mat(inputMapped, b, maxT, maxC);
 
 			// apply decoding algorithm to batch element 
-			const std::vector<uint32_t> decoded = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType);
+			const std::vector<std::vector<double>> decoded = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType);
 			
 			// write to output tensor
 			fillResult(decoded, outputMapped, b, maxT, maxC);
@@ -228,7 +228,7 @@ public:
 			MatrixTensor<decltype(inputMapped)> mat(inputMapped, b, maxT, maxC);
 
 			// apply decoding algorithm to batch element 
-			const std::vector<uint32_t> decoded = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType);
+			const std::vector<std::vector<double>> decoded = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType);
 			
 			// write to output tensor
 			fillResult(decoded, outputMapped, b, maxT, maxC);
