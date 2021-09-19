@@ -70,7 +70,7 @@ public:
 
 
 	// method which gets a NumPy array (TxBxC) as input and returns a list of B lists (label-strings)
-	std::vector<std::vector<std::vector<double>>> compute(const py::array_t<double, py::array::c_style | py::array::forcecast>& array) const
+	std::vector<std::vector<double>> compute(const py::array_t<double, py::array::c_style | py::array::forcecast>& array) const
 	{
 		py::buffer_info buf = array.request();
 		const size_t maxT = buf.shape[0];
@@ -84,14 +84,15 @@ public:
 		}
 
 		// go over all batch elements
-		std::vector<std::vector<std::vector<double>>> res;
+		std::vector<std::vector<double>> res;
 		for (size_t b = 0; b < maxB; ++b)
 		{
 			// wrapper around Tensor
 			MatrixArray mat(array, b, maxT, maxC);
 
 			// apply decoding algorithm to batch element 
-			res.push_back(wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType));
+			std::vector<std::vector<double>> rest = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType)
+			res.push_back(rest[1]);
 		}
 
 		return res;
