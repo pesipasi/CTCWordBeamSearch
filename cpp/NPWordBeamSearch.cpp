@@ -91,8 +91,8 @@ public:
 			MatrixArray mat(array, b, maxT, maxC);
 
 			// apply decoding algorithm to batch element 
-			std::vector<std::vector<double>> rest = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType)
-			res.push_back(rest[1]);
+			auto rest = wordBeamSearch(mat, m_beamWidth, m_lm, m_lmType)
+			// res.push_back(rest[1]);
 		}
 
 		return res;

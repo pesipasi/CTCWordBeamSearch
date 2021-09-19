@@ -32,7 +32,7 @@ int main()
 		// decode it
 		// std::vector<mType> extra_info;
 		std::vector<std::vector<double>> res;
-		std::vector<std::vector<double>> rest = wordBeamSearch(data.mat, 10, lm, lmType);
+		auto rest = wordBeamSearch(data.mat, 10, lm, lmType);
 		res.push_back(rest[1]);
 
 
