@@ -65,8 +65,11 @@ void test()
 	// decode
 	DataLoader loader("../../data/test/", 1, LanguageModelType::NGrams);
 	const auto data=loader.getNext();
-	const auto decoded=wordBeamSearch(data.mat, 10, loader.getLanguageModel(), LanguageModelType::Words);
-	assert(loader.getLanguageModel()->labelToUtf8(decoded) == "ba");
+
+
+	std::vector<std::vector<double>> decoded=wordBeamSearch(data.mat, 10, loader.getLanguageModel(), LanguageModelType::Words);
+	std::vector<uint32_t> int_decode (decoded[1].begin(), decoded[1].end());
+	assert(loader.getLanguageModel()->labelToUtf8(int_decode) == "ba");
 
 	
 	std::cout << "UNITTESTS: end\n";
