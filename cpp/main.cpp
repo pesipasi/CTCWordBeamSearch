@@ -31,12 +31,11 @@ int main()
 		int prb = 1;
 		// decode it
 		// std::vector<mType> extra_info;
-		
-		std::vector<std::vector<double>> res = wordBeamSearch(data.mat, 10, lm, lmType);
-		std::vector<double> g ;
-		g.push_back(res);
+		std::vector<std::vector<double>> res;
+		std::vector<std::vector<double>> rest = wordBeamSearch(data.mat, 10, lm, lmType);
+		res.push_back(rest[1]);
 
-		
+
 		std::cout << res[0].size() << '-' << res[1].size() << '-' << res[2].size() << '-' <<"\n";
 		for (auto i = 0; i< 10; i++)
 		{
