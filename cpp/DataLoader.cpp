@@ -38,7 +38,7 @@ DataLoader::Data DataLoader::getNext() const
 	
 	// read csv and return result
 	MatrixCSV mat(matFilename);
-	applySoftmax(mat);
+	// applySoftmax(mat);
 	std::ifstream ftFile(gtFilename);
 	std::string gt{ std::istreambuf_iterator<char>{ftFile}, std::istreambuf_iterator<char>() };
 	Data res{ mat, m_lm->utf8ToLabel(gt) };

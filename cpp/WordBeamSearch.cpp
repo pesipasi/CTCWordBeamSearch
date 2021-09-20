@@ -2,8 +2,7 @@
 #include "Beam.hpp"
 #include <vector>
 #include <memory>
-
-
+#include <iostream>
 std::vector<std::vector<double>> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const std::shared_ptr<LanguageModel>& lm, LanguageModelType lmType)
 {
 	// dim0: T, dim1: C
@@ -39,6 +38,7 @@ std::vector<std::vector<double>> wordBeamSearch(const IMatrix& mat, size_t beamW
 			// extra_info.time_step = t;
 			// extra_info.prob = mat.getAt(t, blank);
 			// extra_info.push_back(mt);
+			// std::cout<<t<<"-"<<" "<<"-"<<mat.getAt(0, 0) <<"\n";
 			curr.addBeam(beam->createChildBeam(prBlank, prNonBlank, t,  mat.getAt(t, blank)));
 
 			// extend current beam
@@ -63,6 +63,7 @@ std::vector<std::vector<double>> wordBeamSearch(const IMatrix& mat, size_t beamW
 				// extra_info.char_name = c;
 				// extra_info.prob = mat.getAt(t, c);
 				// extra_info.push_back(mt);
+				// std::cout<<t<<"-"<<c<<"-"<<mat.getAt(t, c) <<"\n";
 				curr.addBeam(beam->createChildBeam(prBlank, prNonBlank, t, mat.getAt(t, c) , c));
 			}
 		}
