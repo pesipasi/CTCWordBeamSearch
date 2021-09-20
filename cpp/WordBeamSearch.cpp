@@ -3,7 +3,8 @@
 #include <vector>
 #include <memory>
 
-std::vector<double> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const std::shared_ptr<LanguageModel>& lm, LanguageModelType lmType)
+
+std::vector<std::vector<double>> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const std::shared_ptr<LanguageModel>& lm, LanguageModelType lmType)
 {
 	// dim0: T, dim1: C
 	const size_t maxT = mat.rows();
@@ -78,7 +79,7 @@ std::vector<double> wordBeamSearch(const IMatrix& mat, size_t beamWidth, const s
 	std::vector<double> text_char(bestBeam->getText().begin(), bestBeam->getText().end());
 
 	std::vector<std::vector<double>> v = {time_step , text_char, bestBeam->getProb()};
-	return time_step;
+	return v;
 	// return last.getExtra_info();
 }
 
